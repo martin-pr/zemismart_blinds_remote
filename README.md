@@ -33,3 +33,10 @@ We can see that there are distinct timing "units" in the signal. In my case, qua
 
 In the `basic_sketch.ino` we have the simplest version of mimicking the signal. Note that the microseconds quantization step and the quantized signal is pasted in; the rest of the config just sets up the pin numbers. The current setup is intended for Digispark ATtiny85, with the FS1000A board connected to pin 0.
 
+## 4. Using Wifi actions
+
+The `shelly_link_sketch.ino` is intended to be used with Shelly's gen3+ webhook actions and Arduino MKR WiFi 1010. The sketch includes codes 2 pairs of blinds (needs to be customized for your own values), and a simple web interface:
+
+![Simple web interface](web_interface.png)
+
+Each link triggers an action, and can be set up in Shelly's web interface as a custom action.
