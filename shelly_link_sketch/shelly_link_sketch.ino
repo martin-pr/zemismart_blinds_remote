@@ -41,49 +41,49 @@ void setLedColor(unsigned char red, unsigned char green, unsigned char blue) {
 }
 
 void printWifiStatus() {
-  Serial.print("SSID: ");
+  Serial.print(F("SSID: "));
   Serial.println(WiFi.SSID());
 
   IPAddress ip = WiFi.localIP();
-  Serial.print("IP Address: ");
+  Serial.print(F("IP Address: "));
   Serial.println(ip);
 
   long rssi = WiFi.RSSI();
-  Serial.print("signal strength (RSSI):");
+  Serial.print(F("signal strength (RSSI):"));
   Serial.print(rssi);
-  Serial.println(" dBm");
-  Serial.print("To see this page in action, open a browser to http://");
+  Serial.println(F(" dBm"));
+  Serial.print(F("To see this page in action, open a browser to http://"));
   Serial.println(ip);
 }
 
 void printWebPageContent(WiFiClient& client) {
   // HTTP headers always start with a response code (e.g. HTTP/1.1 200 OK)
   // and a content-type so the client knows what's coming, then a blank line:
-  client.println("HTTP/1.1 200 OK");
-  client.println("Content-type:text/html");
+  client.println(F("HTTP/1.1 200 OK"));
+  client.println(F("Content-type:text/html"));
   client.println();
 
-  client.println("<html>");
-  client.println("<body>");
+  client.println(F("<html>"));
+  client.println(F("<body>"));
   
-  client.println("Guest room internal blind control:");
-  client.println("<li><a href=\"/guest_internal_blind_down\">guest_internal_blind_down</a></li>");
-  client.println("<li><a href=\"/guest_internal_blind_up\">guest_internal_blind_up</a></li>");
+  client.println(F("Guest room internal blind control:"));
+  client.println(F("<li><a href=\"/guest_internal_blind_down\">guest_internal_blind_down</a></li>"));
+  client.println(F("<li><a href=\"/guest_internal_blind_up\">guest_internal_blind_up</a></li>"));
 
-  client.println("Guest room external blind control:");
-  client.println("<li><a href=\"/guest_external_blind_down\">guest_external_blind_down</a></li>");
-  client.println("<li><a href=\"/guest_external_blind_up\">guest_external_blind_up</a></li>");
+  client.println(F("Guest room external blind control:"));
+  client.println(F("<li><a href=\"/guest_external_blind_down\">guest_external_blind_down</a></li>"));
+  client.println(F("<li><a href=\"/guest_external_blind_up\">guest_external_blind_up</a></li>"));
 
-  client.println("Master bedroom internal blind control:");
-  client.println("<li><a href=\"/master_internal_blind_down\">master_internal_blind_down</a></li>");
-  client.println("<li><a href=\"/master_internal_blind_up\">master_internal_blind_up</a></li>");
+  client.println(F("Master bedroom internal blind control:"));
+  client.println(F("<li><a href=\"/master_internal_blind_down\">master_internal_blind_down</a></li>"));
+  client.println(F("<li><a href=\"/master_internal_blind_up\">master_internal_blind_up</a></li>"));
 
-  client.println("Master bedroom external blind control:");
-  client.println("<li><a href=\"/master_external_blind_down\">master_external_blind_down</a></li>");
-  client.println("<li><a href=\"/master_external_blind_up\">master_external_blind_up</a></li>");
+  client.println(F("Master bedroom external blind control:"));
+  client.println(F("<li><a href=\"/master_external_blind_down\">master_external_blind_down</a></li>"));
+  client.println(F("<li><a href=\"/master_external_blind_up\">master_external_blind_up</a></li>"));
 
-  client.println("</body>");
-  client.println("</html>");
+  client.println(F("</body>"));
+  client.println(F("</html>"));
 
   client.println();
 }
@@ -129,15 +129,15 @@ void setup() {
   Serial.begin(9600);
 
   setLedColor(10, 0, 0);
-  Serial.println("Starting wifi...");
+  Serial.println(F("Starting wifi..."));
   if (WiFi.status() == WL_NO_SHIELD) {
-    Serial.println("WiFi shield not present");
+    Serial.println(F("WiFi shield not present"));
     setLedColor(255, 0, 0);
     while (true);       // don't continue
   }  
 
   while (status != WL_CONNECTED) {
-    Serial.print("Attempting to connect to Network named: ");
+    Serial.print(F("Attempting to connect to Network named: "));
     Serial.println(ssid);
 
     status = WiFi.begin(ssid, pass);
@@ -168,6 +168,7 @@ void sendSignal(unsigned& moving_time, const char* do_signal, const char* stop_s
   }
 }
 
+String currentLine;
 
 void loop() {
   WiFiClient client = server.available();
@@ -175,8 +176,8 @@ void loop() {
   const char* toSend = nullptr;
 
   if (client) {
-    Serial.println("-- new client --");
-    String currentLine = "";
+    Serial.println(F("-- new client --"));
+    currentLine = "";
     while (client.connected()) {
       if (client.available()) {
         char c = client.read();
@@ -198,38 +199,40 @@ void loop() {
           currentLine += c;
         }
 
-        if(currentLine.endsWith("GET /guest_internal_blind_down")) {
+        if(currentLine.endsWith(F("GET /guest_internal_blind_down"))) {
           sendSignal(guest_internal_stop_moving_time, guest_internal_blind_down, guest_internal_blind_stop, toSend);
         }
-        if(currentLine.endsWith("GET /guest_internal_blind_up")) {
+        if(currentLine.endsWith(F("GET /guest_internal_blind_up"))) {
           sendSignal(guest_internal_stop_moving_time, guest_internal_blind_up, guest_internal_blind_stop, toSend);
         }
 
-        if(currentLine.endsWith("GET /guest_external_blind_down")) {
+        if(currentLine.endsWith(F("GET /guest_external_blind_down"))) {
           sendSignal(guest_external_stop_moving_time, guest_external_blind_down, guest_external_blind_stop, toSend);
         }
-        if(currentLine.endsWith("GET /guest_external_blind_up")) {
+        if(currentLine.endsWith(F("GET /guest_external_blind_up"))) {
           sendSignal(guest_external_stop_moving_time, guest_external_blind_up, guest_external_blind_stop, toSend);
         }
 
-        if(currentLine.endsWith("GET /master_internal_blind_down")) {
+        if(currentLine.endsWith(F("GET /master_internal_blind_down"))) {
           sendSignal(master_internal_stop_moving_time, master_internal_blind_down, master_internal_blind_stop, toSend);
         }
-        if(currentLine.endsWith("GET /master_internal_blind_up")) {
+        if(currentLine.endsWith(F("GET /master_internal_blind_up"))) {
           sendSignal(master_internal_stop_moving_time, master_internal_blind_up, master_internal_blind_stop, toSend);
         }
 
-        if(currentLine.endsWith("GET /master_external_blind_down")) {
+        if(currentLine.endsWith(F("GET /master_external_blind_down"))) {
           sendSignal(master_external_stop_moving_time, master_external_blind_down, master_external_blind_stop, toSend);
         }
-        if(currentLine.endsWith("GET /master_external_blind_up")) {
+        if(currentLine.endsWith(F("GET /master_external_blind_up"))) {
           sendSignal(master_external_stop_moving_time, master_external_blind_up, master_external_blind_stop, toSend);
         }
       }
     }
 
     client.stop();
-    Serial.println("-- client disconnected --");
+    delay(1);
+
+    Serial.println(F("-- client disconnected --"));
 
     if(toSend != nullptr) {
       sendCommand(toSend);
