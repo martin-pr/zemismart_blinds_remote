@@ -106,7 +106,7 @@ void sendCommand(const char* ptr) {
     }
   }
 
-  setLedColor(0, 3, 0);
+  setLedColor(0, 0, 20);
 }
 
 /////////////////////////////////////////////
@@ -171,14 +171,17 @@ void sendSignal(unsigned& moving_time, const char* do_signal, const char* stop_s
 String currentLine;
 
 void loop() {
+  setLedColor(50,50,50);
   WiFiClient client = server.available();
 
   const char* toSend = nullptr;
-
   if (client) {
+    setLedColor(30, 30, 0);
+
     Serial.println(F("-- new client --"));
     currentLine = "";
     while (client.connected()) {
+      setLedColor(30, 0, 30);
       if (client.available()) {
         char c = client.read();
         Serial.write(c);
@@ -230,7 +233,7 @@ void loop() {
     }
 
     client.stop();
-    delay(1);
+    delay(1000);
 
     Serial.println(F("-- client disconnected --"));
 
@@ -238,4 +241,7 @@ void loop() {
       sendCommand(toSend);
     }
   }
+
+  setLedColor(0, ((millis() / 100) % 10 == 0 ? 1 : 0), 0);
+  delay(20);
 }
